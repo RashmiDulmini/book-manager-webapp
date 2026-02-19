@@ -9,7 +9,7 @@ type BookForm = {
   title: string;
   author: string;
   isbn: string;
-  publicationDate: string; // yyyy-mm-dd for <input type="date">
+  publicationDate: string; 
 };
 
 @Component({
@@ -37,7 +37,7 @@ export class BookManagerComponent implements OnInit {
   deleteBookTitle = '';
   showSuccess = false;
   successMessage = '';
-  successType: 'add' | 'update' = 'add';
+  successType: 'add' | 'update' | 'delete' = 'add';
   formErrors: { [key: string]: string } = {};
   formSubmitted = false;
 
@@ -136,7 +136,7 @@ export class BookManagerComponent implements OnInit {
     }
   }
 
-  showSuccessMessage(message: string, type: 'add' | 'update') {
+  showSuccessMessage(message: string, type: 'add' | 'update' | 'delete') {
     this.successMessage = message;
     this.successType = type;
     this.showSuccess = true;
@@ -184,9 +184,11 @@ export class BookManagerComponent implements OnInit {
   confirmDelete() {
     if (this.deleteBookId === null) return;
 
+    const deletedTitle = this.deleteBookTitle;
     this.bookService.deleteBook(this.deleteBookId).subscribe({
       next: () => {
         this.cancelDelete();
+        this.showSuccessMessage(`"${deletedTitle}" has been deleted successfully!`, 'delete');
         this.loadBooks();
       },
       error: (err) => {

@@ -225,6 +225,29 @@
             </tbody>
           </table>
 
+          <!-- Delete Confirmation Modal -->
+          <div class="modal-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
+            <div class="modal" (click)="$event.stopPropagation()">
+              <div class="modal-header">
+                <h3>Delete Book?</h3>
+                <button class="modal-close" (click)="cancelDelete()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ deleteBookTitle }}</strong>?</p>
+                <p class="modal-warning">This action cannot be undone.</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+                <button class="btn btn-danger" (click)="confirmDelete()">Delete</button>
+              </div>
+            </div>
+          </div>
+
           <!-- Empty State -->
           <div class="empty-state" *ngIf="books.length === 0 && !loading">
             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
@@ -278,7 +301,7 @@
         <polyline points="22 4 12 14.01 9 11.01"></polyline>
       </svg>
     </div>
-    <h3>{{ successType === 'add' ? 'Book Added!' : 'Book Updated!' }}</h3>
+    <h3>{{ successType === 'add' ? 'Success!' : 'Book Updated!' }}</h3>
     <p>{{ successMessage }}</p>
     <button class="btn btn-success" (click)="closeSuccess()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
