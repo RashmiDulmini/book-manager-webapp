@@ -1,0 +1,47 @@
+<div class="container">
+  <h2>Book Management</h2>
+
+  <form (ngSubmit)="submit()" class="form">
+    <input type="text" name="title" [(ngModel)]="formBook.title" placeholder="Title" required />
+    <input type="text" name="author" [(ngModel)]="formBook.author" placeholder="Author" required />
+    <input type="text" name="isbn" [(ngModel)]="formBook.isbn" placeholder="ISBN" required />
+    <input type="date" name="publicationDate" [(ngModel)]="formBook.publicationDate" required />
+
+    <div class="buttons">
+      <button type="submit">
+        {{ editingId === null ? 'Add Book' : 'Update Book' }}
+      </button>
+
+      <button type="button" *ngIf="editingId !== null" (click)="resetForm()">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>ISBN</th>
+        <th>Publication Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let b of books">
+        <td>{{ b.id }}</td>
+        <td>{{ b.title }}</td>
+        <td>{{ b.author }}</td>
+        <td>{{ b.isbn }}</td>
+        <td>{{ b.publicationDate | date }}</td>
+        <td class="actions">
+          <button (click)="edit(b)">Edit</button>
+          <button (click)="delete(b.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
