@@ -4,7 +4,7 @@ import {
   provideZonelessChangeDetection
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration } from '@angular/platform-browser';
 
 import { provideHttpClient } from '@angular/common/http';
 
@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
 
     provideRouter(routes),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(),
 
     provideHttpClient()
   ]

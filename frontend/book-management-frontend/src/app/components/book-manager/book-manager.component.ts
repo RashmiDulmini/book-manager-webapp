@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -32,7 +32,7 @@ export class BookManagerComponent implements OnInit {
   editingId: number | null = null;
   loading = false;
 
-  constructor(private bookService: BookService) {}
+  constructor(private bookService: BookService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadBooks();
@@ -40,14 +40,17 @@ export class BookManagerComponent implements OnInit {
 
   loadBooks() {
     this.loading = true;
+    this.cdr.markForCheck();
     this.bookService.getBooks().subscribe({
       next: (data) => {
         this.books = data;
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed to load books:', err);
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -61,7 +64,10 @@ export class BookManagerComponent implements OnInit {
           this.resetForm();
           this.loadBooks();
         },
-        error: (err) => console.error('Failed to add book:', err)
+        error: (err) => {
+          console.error('Failed to add book:', err);
+          this.cdr.markForCheck();
+        }
       });
     } else {
       this.bookService.updateBook(this.editingId, payload).subscribe({
@@ -69,7 +75,10 @@ export class BookManagerComponent implements OnInit {
           this.resetForm();
           this.loadBooks();
         },
-        error: (err) => console.error('Failed to update book:', err)
+        error: (err) => {
+          console.error('Failed to update book:', err);
+          this.cdr.markForCheck();
+        }
       });
     }
   }
@@ -87,6 +96,7 @@ export class BookManagerComponent implements OnInit {
       isbn: book.isbn,
       publicationDate: dateOnly
     };
+    this.cdr.markForCheck();
   }
 
   delete(id: number) {
@@ -94,7 +104,10 @@ export class BookManagerComponent implements OnInit {
 
     this.bookService.deleteBook(id).subscribe({
       next: () => this.loadBooks(),
-      error: (err) => console.error('Failed to delete book:', err)
+      error: (err) => {
+        console.error('Failed to delete book:', err);
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -106,5 +119,6 @@ export class BookManagerComponent implements OnInit {
       isbn: '',
       publicationDate: ''
     };
+    this.cdr.markForCheck();
   }
 }
