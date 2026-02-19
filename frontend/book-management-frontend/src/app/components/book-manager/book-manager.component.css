@@ -536,6 +536,46 @@
   color: var(--primary);
 }
 
+/* ===== Form Validation Errors ===== */
+.form-group.has-error .input-wrapper input {
+  border-color: var(--danger);
+  background: var(--danger-light);
+}
+
+.form-group.has-error .input-wrapper svg {
+  color: var(--danger);
+}
+
+.form-group.has-error label {
+  color: var(--danger);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--danger);
+  margin-top: 0.4rem;
+  animation: shakeError 0.4s ease-out;
+}
+
+.error-message svg {
+  flex-shrink: 0;
+}
+
+@keyframes shakeError {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-4px);
+  }
+  40%, 80% {
+    transform: translateX(4px);
+  }
+}
+
 /* ===== Buttons ===== */
 .form-actions {
   display: flex;

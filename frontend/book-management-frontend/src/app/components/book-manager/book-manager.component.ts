@@ -38,6 +38,8 @@ export class BookManagerComponent implements OnInit {
   showSuccess = false;
   successMessage = '';
   successType: 'add' | 'update' = 'add';
+  formErrors: { [key: string]: string } = {};
+  formSubmitted = false;
 
   constructor(private bookService: BookService, private cdr: ChangeDetectorRef) {}
 
@@ -63,6 +65,13 @@ export class BookManagerComponent implements OnInit {
   }
 
   submit() {
+    this.formSubmitted = true;
+    
+    if (!this.validateForm()) {
+      this.cdr.markForCheck();
+      return;
+    }
+
     const payload = { ...this.formBook };
     const bookTitle = payload.title;
 
@@ -90,6 +99,40 @@ export class BookManagerComponent implements OnInit {
           this.cdr.markForCheck();
         }
       });
+    }
+  }
+
+  validateForm(): boolean {
+    this.formErrors = {};
+    let isValid = true;
+
+    if (!this.formBook.title || this.formBook.title.trim() === '') {
+      this.formErrors['title'] = 'Book title is required';
+      isValid = false;
+    }
+
+    if (!this.formBook.author || this.formBook.author.trim() === '') {
+      this.formErrors['author'] = 'Author name is required';
+      isValid = false;
+    }
+
+    if (!this.formBook.isbn || this.formBook.isbn.trim() === '') {
+      this.formErrors['isbn'] = 'ISBN is required';
+      isValid = false;
+    }
+
+    if (!this.formBook.publicationDate) {
+      this.formErrors['publicationDate'] = 'Publication date is required';
+      isValid = false;
+    }
+
+    return isValid;
+  }
+
+  clearFieldError(field: string) {
+    if (this.formErrors[field]) {
+      delete this.formErrors[field];
+      this.cdr.markForCheck();
     }
   }
 
@@ -164,6 +207,8 @@ export class BookManagerComponent implements OnInit {
   resetForm() {
     this.editingId = null;
     this.showForm = false;
+    this.formSubmitted = false;
+    this.formErrors = {};
     this.formBook = {
       title: '',
       author: '',
