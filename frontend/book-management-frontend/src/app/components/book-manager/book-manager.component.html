@@ -1,0 +1,313 @@
+<div class="page-wrapper">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <div class="book-icon-animated">
+          <img src="book6.jpg" alt="Book Logo" class="logo-image" />
+        </div>
+        <h1>Book Manager</h1>
+      </div>
+      <p class="subtitle">Organize your personal library with ease</p>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- Books List Section -->
+    <section class="list-section">
+      <div class="card">
+        <div class="card-header">
+          <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              <line x1="12" y1="6" x2="12" y2="6"></line>
+            </svg>
+            Your Book Collection
+          </h2>
+          <div class="header-actions">
+            <span class="badge">{{ books.length }} books</span>
+            <button class="btn btn-primary btn-add-new" (click)="toggleForm()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M5 12h14"></path>
+              </svg>
+              Add New Book
+            </button>
+          </div>
+        </div>
+
+        <!-- Form Section (shown when toggled) -->
+        <div class="form-overlay" *ngIf="showForm" (click)="toggleForm()"></div>
+        <div class="form-panel" *ngIf="showForm">
+          <div class="card form-card">
+            <div class="card-header">
+              <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14M5 12h14" *ngIf="editingId === null"></path>
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" *ngIf="editingId !== null"></path>
+                </svg>
+                {{ editingId === null ? 'Add New Book' : 'Edit Book' }}
+              </h2>
+              <button class="btn-close" (click)="toggleForm()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <form (ngSubmit)="submit()" class="form">
+              <div class="form-grid">
+                <div class="form-group" [class.has-error]="formSubmitted && formErrors['title']">
+                  <label for="title">Book Title</label>
+                  <div class="input-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <input 
+                      type="text" 
+                      id="title"
+                      name="title" 
+                      [(ngModel)]="formBook.title" 
+                      placeholder="Enter book title"
+                      (input)="clearFieldError('title')" 
+                    />
+                  </div>
+                  <span class="error-message" *ngIf="formSubmitted && formErrors['title']">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    {{ formErrors['title'] }}
+                  </span>
+                </div>
+
+                <div class="form-group" [class.has-error]="formSubmitted && formErrors['author']">
+                  <label for="author">Author</label>
+                  <div class="input-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <input 
+                      type="text" 
+                      id="author"
+                      name="author" 
+                      [(ngModel)]="formBook.author" 
+                      placeholder="Enter author name"
+                      (input)="clearFieldError('author')" 
+                    />
+                  </div>
+                  <span class="error-message" *ngIf="formSubmitted && formErrors['author']">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    {{ formErrors['author'] }}
+                  </span>
+                </div>
+
+                <div class="form-group" [class.has-error]="formSubmitted && formErrors['isbn']">
+                  <label for="isbn">ISBN</label>
+                  <div class="input-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <input 
+                      type="text" 
+                      id="isbn"
+                      name="isbn" 
+                      [(ngModel)]="formBook.isbn" 
+                      placeholder="Enter ISBN number"
+                      (input)="clearFieldError('isbn')" 
+                    />
+                  </div>
+                  <span class="error-message" *ngIf="formSubmitted && formErrors['isbn']">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    {{ formErrors['isbn'] }}
+                  </span>
+                </div>
+
+                <div class="form-group" [class.has-error]="formSubmitted && formErrors['publicationDate']">
+                  <label for="publicationDate">Publication Date</label>
+                  <div class="input-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                      <line x1="16" y1="2" x2="16" y2="6"></line>
+                      <line x1="8" y1="2" x2="8" y2="6"></line>
+                      <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <input 
+                      type="date" 
+                      id="publicationDate"
+                      name="publicationDate" 
+                      [(ngModel)]="formBook.publicationDate"
+                      (change)="clearFieldError('publicationDate')" 
+                    />
+                  </div>
+                  <span class="error-message" *ngIf="formSubmitted && formErrors['publicationDate']">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    {{ formErrors['publicationDate'] }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12" *ngIf="editingId === null"></polyline>
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" *ngIf="editingId !== null"></path>
+                    <polyline points="17 21 17 13 7 13 7 21" *ngIf="editingId !== null"></polyline>
+                    <polyline points="7 3 7 8 15 8" *ngIf="editingId !== null"></polyline>
+                  </svg>
+                  {{ editingId === null ? 'Add Book' : 'Save Changes' }}
+                </button>
+                <button type="button" class="btn btn-secondary" (click)="toggleForm()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="table" *ngIf="books.length > 0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Published</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let b of books; let i = index">
+                <td class="cell-id">{{ i + 1 }}</td>
+                <td class="cell-title">
+                  <div class="book-title">{{ b.title }}</div>
+                </td>
+                <td class="cell-author">{{ b.author }}</td>
+                <td class="cell-isbn">{{ b.isbn }}</td>
+                <td class="cell-date">{{ b.publicationDate | date:'mediumDate' }}</td>
+                <td class="cell-actions">
+                  <button class="btn-icon btn-edit" (click)="edit(b)" title="Edit book">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                    </svg>
+                  </button>
+                  <button class="btn-icon btn-delete" (click)="delete(b)" title="Delete book">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Delete Confirmation Modal -->
+          <div class="modal-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()">
+            <div class="modal" (click)="$event.stopPropagation()">
+              <div class="modal-header">
+                <h3>Delete Book?</h3>
+                <button class="modal-close" (click)="cancelDelete()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ deleteBookTitle }}</strong>?</p>
+                <p class="modal-warning">This action cannot be undone.</p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+                <button class="btn btn-danger" (click)="confirmDelete()">Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="books.length === 0 && !loading">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+            <h3>No books yet</h3>
+            <p>Click "Add New Book" to start building your collection.</p>
+          </div>
+
+          <!-- Loading State -->
+          <div class="loading-state" *ngIf="loading">
+            <div class="spinner"></div>
+            <p>Loading your books...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="delete-overlay" *ngIf="showDeleteConfirm" (click)="cancelDelete()"></div>
+  <div class="delete-modal" *ngIf="showDeleteConfirm">
+    <div class="delete-modal-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+    <h3>Delete Book?</h3>
+    <p>Are you sure you want to delete <strong>"{{ deleteBookTitle }}"</strong>? This action cannot be undone.</p>
+    <div class="delete-modal-actions">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button class="btn btn-danger" (click)="confirmDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="success-overlay" *ngIf="showSuccess" (click)="closeSuccess()"></div>
+  <div class="success-modal" *ngIf="showSuccess">
+    <div class="success-modal-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    <h3>{{ successType === 'add' ? 'Success!' : 'Book Updated!' }}</h3>
+    <p>{{ successMessage }}</p>
+    <button class="btn btn-success" (click)="closeSuccess()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      Great!
+    </button>
+  </div>
+</div>
