@@ -31,6 +31,13 @@ export class BookManagerComponent implements OnInit {
 
   editingId: number | null = null;
   loading = false;
+  showForm = false;
+  showDeleteConfirm = false;
+  deleteBookId: number | null = null;
+  deleteBookTitle = '';
+  showSuccess = false;
+  successMessage = '';
+  successType: 'add' | 'update' = 'add';
 
   constructor(private bookService: BookService, private cdr: ChangeDetectorRef) {}
 
@@ -57,11 +64,13 @@ export class BookManagerComponent implements OnInit {
 
   submit() {
     const payload = { ...this.formBook };
+    const bookTitle = payload.title;
 
     if (this.editingId === null) {
       this.bookService.addBook(payload).subscribe({
         next: () => {
           this.resetForm();
+          this.showSuccessMessage(`"${bookTitle}" has been added to your collection!`, 'add');
           this.loadBooks();
         },
         error: (err) => {
@@ -73,6 +82,7 @@ export class BookManagerComponent implements OnInit {
       this.bookService.updateBook(this.editingId, payload).subscribe({
         next: () => {
           this.resetForm();
+          this.showSuccessMessage(`"${bookTitle}" has been updated successfully!`, 'update');
           this.loadBooks();
         },
         error: (err) => {
@@ -83,8 +93,22 @@ export class BookManagerComponent implements OnInit {
     }
   }
 
+  showSuccessMessage(message: string, type: 'add' | 'update') {
+    this.successMessage = message;
+    this.successType = type;
+    this.showSuccess = true;
+    this.cdr.markForCheck();
+  }
+
+  closeSuccess() {
+    this.showSuccess = false;
+    this.successMessage = '';
+    this.cdr.markForCheck();
+  }
+
   edit(book: Book) {
     this.editingId = book.id;
+    this.showForm = true;
 
     const dateOnly = book.publicationDate
       ? book.publicationDate.substring(0, 10)
@@ -99,20 +123,47 @@ export class BookManagerComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  delete(id: number) {
-    if (!confirm('Are you sure you want to delete this book?')) return;
+  toggleForm() {
+    this.showForm = !this.showForm;
+    if (!this.showForm) {
+      this.resetForm();
+    }
+    this.cdr.markForCheck();
+  }
 
-    this.bookService.deleteBook(id).subscribe({
-      next: () => this.loadBooks(),
+  delete(book: Book) {
+    this.deleteBookId = book.id;
+    this.deleteBookTitle = book.title;
+    this.showDeleteConfirm = true;
+    this.cdr.markForCheck();
+  }
+
+  confirmDelete() {
+    if (this.deleteBookId === null) return;
+
+    this.bookService.deleteBook(this.deleteBookId).subscribe({
+      next: () => {
+        this.cancelDelete();
+        this.loadBooks();
+      },
       error: (err) => {
         console.error('Failed to delete book:', err);
+        this.cancelDelete();
         this.cdr.markForCheck();
       }
     });
   }
 
+  cancelDelete() {
+    this.showDeleteConfirm = false;
+    this.deleteBookId = null;
+    this.deleteBookTitle = '';
+    this.cdr.markForCheck();
+  }
+
   resetForm() {
     this.editingId = null;
+    this.showForm = false;
     this.formBook = {
       title: '',
       author: '',
